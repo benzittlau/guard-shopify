@@ -3,6 +3,7 @@ require 'yaml'
 require 'guard/guard'
 require 'shopify_api'
 require 'ptools'
+require 'ruby-debug'
 
 module Guard
   class Shopify < Guard
@@ -57,13 +58,17 @@ module Guard
       @theme_id = main_theme.id
     end
 
-    def run_on_change(paths)
+    def run_on_changes(paths)
       paths.each do |p|
         Notifier.notify("#{p} was changed.")
         puts "#{p} was changed."
 
+        matches = /templates\/(\d*)\/(.*)/.match(p)
+
         begin
-          remote_asset = ShopifyAPI::Asset.find(p, :params => {:theme_id => @theme_id})
+          theme_id = matches[1]
+          asset_name = matches[2]
+          remote_asset = ShopifyAPI::Asset.find(asset_name, :params => {:theme_id => theme_id})
         rescue Exception => e
           puts "Error retrieving remote asset matching #{p}; nothing uploaded."
           puts e.message
