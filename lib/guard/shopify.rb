@@ -25,7 +25,7 @@ module Guard
       end
       @url = config['url']
       @api_key = config['api_key']
-      @password = config['password']
+      @secret = config['secret']
     end
 
     # Old line-based config file format
@@ -48,7 +48,7 @@ module Guard
     end
 
     def authenticate_with_shopify
-      ShopifyAPI::Base.site = "https://#{@api_key}:#{@password}@#{@url}/admin"
+      ShopifyAPI::Base.site = "https://#{@api_key}:#{@secret}@#{@url}/admin"
     end
 
     def get_main_theme_id
